@@ -1,0 +1,337 @@
+﻿{% extends "administration/base_administration.html" %}
+{% load election_filters %}
+{% block title_dash %}Résultats de l'Élection{% endblock title_dash %}
+
+{% block style %}
+    <style>
+        .card-winner {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: white;
+            border: none;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            min-height: 300px; /* Hauteur minimale pour voir les pétales */
+        }
+
+        .card-candidat {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card-winner:hover, .card-candidat:hover {
+            transform: scale(1.05);
+        }
+
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+            border: 3px solid #007bff;
+        }
+
+        .rank-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #007bff;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .petals {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1; /* Au-dessus du fond, mais en-dessous du contenu */
+        }
+
+        .petal {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            animation: fall 3s infinite ease-out, sparkle 0.8s infinite alternate;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
+            transform-origin: center;
+        }
+
+        /* Couleurs festives */
+        .petal:nth-child(1n) { background: rgba(255, 99, 71, 0.9); } /* Tomate */
+        .petal:nth-child(2n) { background: rgba(50, 205, 50, 0.9); } /* Vert lime */
+        .petal:nth-child(3n) { background: rgba(255, 215, 0, 0.9); } /* Or */
+        .petal:nth-child(4n) { background: rgba(138, 43, 226, 0.9); } /* Violet */
+        .petal:nth-child(5n) { background: rgba(255, 20, 147, 0.9); } /* Rose vif */
+
+        @keyframes fall {
+            0% { 
+                transform: translateY(-20px) translateX(0) rotate(0deg); 
+                opacity: 1; 
+            }
+            25% { 
+                transform: translateY(25%) translateX(15px) rotate(90deg); 
+                opacity: 0.9; 
+            }
+            50% { 
+                transform: translateY(50%) translateX(-15px) rotate(180deg); 
+                opacity: 0.7; 
+            }
+            75% { 
+                transform: translateY(75%) translateX(10px) rotate(270deg); 
+                opacity: 0.4; 
+            }
+            100% { 
+                transform: translateY(100%) translateX(0) rotate(360deg); 
+                opacity: 0; 
+            }
+        }
+
+        @keyframes sparkle {
+            0% { transform: scale(0.8); opacity: 0.6; }
+            100% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .btn-download {
+            background: linear-gradient(90deg, #007bff, #00d4ff);
+            color: white;
+            border-radius: 25px;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-download:hover {
+            background: linear-gradient(90deg, #0056b3, #00b7eb);
+            transform: scale(1.05);
+        }
+
+        .nav-tabs .nav-link {
+            color: #007bff;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link.active {
+            background: linear-gradient(90deg, #007bff, #00d4ff);
+            color: white;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: #0056b3;
+        }
+
+        .tab-content {
+            background: linear-gradient(120deg, #f0f8ff, #e6f0fa);
+            padding: 20px;
+            border-radius: 10px;
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+    </style>
+{% endblock style %}
+
+{% block content %}
+    {% if election_active %}
+        <h2 class="mb-4 text-center" style="color: #007bff; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);">Résultats de l'Élection : {{ election_active.type }} ({{ election_active.date }})</h2>
+
+        <!-- Onglets -->
+        <ul class="nav nav-tabs mb-4" id="electionTabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="results-tab" data-bs-toggle="tab" href="#results" role="tab" aria-controls="results" aria-selected="true">Résultats</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="bar-stats-tab" data-bs-toggle="tab" href="#bar-stats" role="tab" aria-controls="bar-stats" aria-selected="false">Statistiques (Barres)</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pie-stats-tab" data-bs-toggle="tab" href="#pie-stats" role="tab" aria-controls="pie-stats" aria-selected="false">Statistiques (Circulaire)</a>
+            </li>
+        </ul>
+
+        
+        
+        
+        <div class="tab-content" id="electionTabContent">
+            <!-- Onglet Résultats -->
+            
+            <div class="tab-pane fade show active" id="results" role="tabpanel" aria-labelledby="results-tab">
+                <div class="row g-4">
+                    <!-- Affichage du gagnant -->
+                    {% if gagnant %}
+                        <div class="col-md-4">
+                            <div class="card card-winner p-3">
+                                
+                                <div class="petals">
+                                    {% for i in "123456789101112131415"|make_list %}
+                                        <div class="petal" style="left: {{ i|add:"5" }}%; animation-delay: {{ i|floatformat:"2" }}s;"></div>
+                                    {% endfor %}
+                                </div>
+                                <div class="card-body text-center" style="z-index: 2; position: relative;">
+                                    <span class="rank-badge">1</span>
+                                    <img src="{{ gagnant.photo_profile.url }}" alt="{{ gagnant.nom }}" class="profile-img">
+                                    <h5 class="card-title">{{ gagnant.prenom }} {{ gagnant.nom }} <span style="font-size: 0.8em;">(Gagnant)</span></h5>
+                                    <p class="card-text">Parti : {{ gagnant.parti_politique }}</p>
+                                    <p class="card-text">Votes : {{ election_active.resultats|get_item:gagnant.id|stringformat:"s" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Affichage des autres candidats -->
+                    {% for candidat in candidats_tries %}
+                        {% if candidat != gagnant %}
+                            <div class="col-md-4">
+                                <div class="card card-candidat p-3">
+                                    <div class="card-body text-center">
+                                        <span class="rank-badge">{{ forloop.counter|add:1 }}</span>
+                                        <img src="{{ candidat.photo_profile.url }}" alt="{{ candidat.nom }}" class="profile-img">
+                                        <h5 class="card-title">{{ candidat.prenom }} {{ candidat.nom }}</h5>
+                                        <p class="card-text">Parti : {{ candidat.parti_politique }}</p>
+                                        <p class="card-text">Votes : {{ election_active.resultats|get_item:candidat.id|stringformat:"s" }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <!-- Bouton de téléchargement PDF -->
+                <div class="text-center mt-4">
+                    <a href="{% url 'download_election_results' election_active.id %}" class="btn btn-download">Télécharger les résultats en PDF</a>
+                </div>
+            </div>
+
+            <!-- Onglet Statistiques (Barres) -->
+            <div class="tab-pane fade" id="bar-stats" role="tabpanel" aria-labelledby="bar-stats-tab">
+                <canvas id="barChart" width="400" height="200"></canvas>
+            </div>
+
+            <!-- Onglet Statistiques (Circulaire) -->
+            <div class="tab-pane fade" id="pie-stats" role="tabpanel" aria-labelledby="pie-stats-tab">
+                <canvas id="pieChart" width="400" height="400"></canvas>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">{{ message }}</div>
+    {% endif %}
+{% endblock content %}
+
+{% block script %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        {% if election_active %}
+            // Données communes
+            const labels = [{% for candidat in candidats_tries %}"{{ candidat.prenom }} {{ candidat.nom }}",{% endfor %}];
+            const votes = [{% for candidat in candidats_tries %}{{ election_active.resultats|get_item:candidat.id }},{% endfor %}];
+            const colors = [
+                'rgba(255, 99, 71, 0.8)',   // Tomate
+                'rgba(50, 205, 50, 0.8)',   // Vert lime
+                'rgba(255, 215, 0, 0.8)',   // Or
+                'rgba(138, 43, 226, 0.8)',  // Violet
+                'rgba(255, 20, 147, 0.8)',  // Rose vif
+                'rgba(0, 191, 255, 0.8)',   // Bleu ciel
+                'rgba(255, 165, 0, 0.8)'    // Orange
+            ];
+
+            // Graphique en barres
+            const barCtx = document.getElementById('barChart').getContext('2d');
+            const barChart = new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Nombre de votes',
+                        data: votes,
+                        backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                        borderColor: 'rgba(0, 123, 255, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Votes'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Répartition des Votes (Barres)',
+                            font: { size: 18 }
+                        }
+                    }
+                }
+            });
+
+            // Graphique circulaire
+            const pieCtx = document.getElementById('pieChart').getContext('2d');
+            const pieChart = new Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Votes',
+                        data: votes,
+                        backgroundColor: colors.slice(0, labels.length),
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 20,
+                                padding: 15
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Répartition des Votes (Circulaire)',
+                            font: { size: 18 }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    let value = context.raw || 0;
+                                    let total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    let percentage = ((value / total) * 100).toFixed(1);
+                                    return `${label}: ${value} votes (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        {% endif %}
+    </script>
+{% endblock script %}

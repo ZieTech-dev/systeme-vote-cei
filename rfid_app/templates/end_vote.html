@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote Électronique</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header bg-primary text-white text-center">
+                    <h2>Confirmez votre vote</h2>
+                </div>
+                <div class="card-body">
+                    {% if success %}
+                        <div class="alert alert-success text-center" role="alert">
+                            ✅ Vous avez voté pour <strong>{{ candidat.nom }} {{ candidat.prenom }}</strong> avec succès !
+                        </div>
+                    {% elif error %}
+                        <div class="alert alert-danger text-center" role="alert">
+                            ❌ {{ error }}
+                        </div>
+                    {% endif %}
+
+                    {% comment %} <form method="POST" action="{% url 'voter' election_id=candidat.election.id candidat_id=candidat.id %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="rfid_uid" class="form-label">Votre carte RFID</label>
+                            <input type="text" id="rfid_uid" name="rfid_uid" class="form-control" placeholder="Scannez votre carte ici..." required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg">Valider mon vote</button>
+                        </div>
+                    </form> {% endcomment %}
+                </div>
+                <div class="card-footer text-center text-muted">
+                    Votre vote est sécurisé et confidentiel. 🇫🇷
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

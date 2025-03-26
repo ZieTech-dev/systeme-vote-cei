@@ -1,0 +1,38 @@
+﻿{% extends "administration/base_administration.html" %}
+
+{% block style %}
+    <style>
+
+    </style>
+{% endblock style %}
+
+{% block title_dash %}Candidats{% endblock title_dash %}
+
+{% block content %}
+
+
+    <h2>Gerer les Candidats</h2>
+    
+    <a class="btn btn-outline-warning" href="{% url "candidat_list" %}">liste des Candidats</a>
+    <a class="btn btn-outline-warning" href="{% url "create_candidat" %}">creer une Candidats</a>
+
+    {% if message %}
+        <div class="alert alert-danger alert-info" role="alert">
+            {{ message }}
+        </div>
+    {% endif %} 
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    
+{% endblock content %}
+
+
+{% block script %}
+    
+{% endblock script %}

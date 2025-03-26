@@ -1,0 +1,109 @@
+﻿{% extends "administration/base_administration.html" %}
+
+{% block style %}
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        .btn {
+            padding: 5px 15px;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+        }
+        .btn-launch { background-color: #4CAF50; }
+        .btn-close { background-color: #F44336; }
+    </style>
+{% endblock style %}
+
+{% block title_dash %}Electeurs{% endblock title_dash %}
+
+{% block content %}
+<h2>Liste des Elections</h2>
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert 
+        {% if message.tags == 'success' %}alert-success
+        {% elif message.tags == 'warning' %}alert-warning
+        {% elif message.tags == 'error' %}alert-danger
+        {% elif message.tags == 'info' %}alert-info
+        {% endif %} 
+        alert-dismissible fade show" role="alert">
+        
+        {{ message }}
+
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="container mt-5">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Type</th>
+                <th scope="col">Candidats</th>
+                <th>État</th>
+                <th>Statut</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for election in elections %}
+            <tr>
+                <td>{{ election.date }}</td>
+                <td>{{ election.type }}</td>
+                <td>{{ election.candidats.count }}</td>
+                <td>
+                    {% if election.is_closed %}
+                        <span style="color: red;">Clôturée</span>
+                    {% else %}
+                        <span style="color: green;">En cours</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if election.actif %}
+                        <span class="badge bg-success">Active</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Inactive</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not election.is_closed %}
+                        <a href="{% url 'lancer_election' election.id %}" class="btn btn-launch">Lancer</a>
+                        <a href="{% url 'cloturer_election' election.id %}" class="btn btn-close">Clôturer</a>
+                        <a href="{% url 'activer_election' election.id %}" class="btn btn-sm {% if election.actif %}btn-danger{% else %}btn-success{% endif %}">
+                            {% if election.actif %}Désactiver{% else %}Activer{% endif %}
+                        </a>
+                    {% else %}
+                        <span>Aucune action disponible</span>
+                    {% endif %}
+                </td>
+                {% comment %} <td><a href="#" class="btn btn-primary">Voir</a></td> {% endcomment %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'create_election' %}" class="btn btn-success">Créer une Élection</a>
+</div> 
+    
+{% endblock content %}
+
+
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+{% endblock script %}
+

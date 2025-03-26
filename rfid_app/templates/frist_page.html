@@ -1,0 +1,19 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Accueil</title>
+</head>
+<body>
+    <h1>Bienvenue, veuillez présenter votre carte RFID</h1>
+    
+    {% if message %}
+        <p style="color: red;">{{ message }}</p>
+    {% endif %}
+
+    <form method="POST" action="{% url 'scan_card' %}">
+        {% csrf_token %}
+        <button type="submit">Scanner la carte</button>
+    </form>
+</body>
+</html>

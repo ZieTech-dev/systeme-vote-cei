@@ -1,0 +1,135 @@
+﻿{% extends "administration/base_administration.html" %}
+{% load static %}
+
+{% block title_dash %}Electeurs{% endblock title_dash %}
+
+{% block style %}
+<style>
+    /* Limiter la largeur de la section de contenu */
+
+    /* Instructions avec couleur dynamique */
+    .instruction {
+        color: #F29F05;
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-align: center;
+    }
+    
+    .instruction span {
+        color: #0A722F;
+        font-weight: 700;
+    }
+
+    
+
+    /* Mise en forme des alertes */
+    .alert-info, .alert-danger {
+        font-weight: bold;
+        text-align: center;
+    }
+
+    /* Bouton personnalisé */
+    .btn-outline-warning {
+        display: block;
+        margin: 20px auto;
+        width: 60%;
+    }
+
+    /* Card avec bordure arrondie */
+    .card {
+        border-radius: 12px;
+    }
+
+    /* Card-header personnalisé */
+    .card-header {
+        border-radius: 12px 12px 0 0;
+    }
+
+    /* Espacement entre les informations dans la card */
+    .list-group-item {
+        font-size: 1.1rem;
+    }
+
+    /* Amélioration des alertes pour rendre plus lisible */
+    .alert-info, .alert-danger {
+        margin-top: 20px;
+    }
+    
+</style>
+{% endblock style %}
+
+{% block content %}
+    <!-- Messages de feedback -->
+
+    {% if message %}
+        <div class="alert alert-danger alert-info" role="alert">
+            {{ message }}
+        </div>
+    {% endif %} 
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+
+    {% if page == "valide_page" %}
+
+    <h2 class="instruction">PRÉSENTEZ VOTRE <span>CARTE D'ÉLECTEUR</span></h2>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-6">
+                <!-- Ta div ici -->
+                <div >
+                    <div class="card-body">
+                        <dotlottie-player src="https://lottie.host/c3eb743a-16fa-41ae-9f1e-a9c1e106ae44/6mO6UJMxV0.lottie" class="dotlottie" background="transparent" speed="1" loop autoplay></dotlottie-player>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="center" role="alert">
+        
+        
+    </div>
+            
+    <a href="{% url 'verifie_info_electeur' %}" class="btn btn-outline-warning">Vérifier les informations</a>
+        
+        
+    {% endif %}
+
+    {% if page == "verifie_info_electeur" %}
+        {% if utilisateur %}
+        <div class="container mt-5">
+            <div class="card shadow-sm rounded-4">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3>Informations de l'Électeur</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Nom:</strong> {{ utilisateur.nom }}</li>
+                        <li class="list-group-item"><strong>Prénom:</strong> {{ utilisateur.prenom }}</li>
+                        <li class="list-group-item"><strong>Date de naissance:</strong> {{ utilisateur.date_naissance }}</li>
+                        <li class="list-group-item"><strong>Adresse:</strong> {{ utilisateur.adresse }}</li>
+                        <li class="list-group-item"><strong>Email:</strong> {{ utilisateur.email }}</li>
+                        <li class="list-group-item"><strong>Téléphone:</strong> {{ utilisateur.telephone }}</li>
+                        <li class="list-group-item"><strong>Date d'inscription:</strong> {{ utilisateur.date_inscription }}</li>
+                        <li class="list-group-item"><strong>RFID UID:</strong> {{ utilisateur.rfid_uid }}</li>
+                        <li class="list-group-item"><strong>Token:</strong> {{ utilisateur.token|default:"N/A" }}</li>
+                        <li class="list-group-item"><strong>A voté:</strong> {{ utilisateur.a_voter|yesno:"Oui,Non" }}</li>
+                    </ul>
+                </div>
+            </div>
+            <a href="{% url 'valide_presence' %}" class="btn btn-outline-warning">Valider la présence</a>
+        </div>
+        {% else %}
+            <h3 class="text-center mt-4">Aucune information trouvée pour cet utilisateur</h3>
+        {% endif %}
+    {% endif %}
+{% endblock content %}
+
+{% block script %}
+<script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+{% endblock script %}

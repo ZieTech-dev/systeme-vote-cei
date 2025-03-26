@@ -1,0 +1,39 @@
+﻿{% extends "administration/base_administration.html" %}
+
+{% block style %}
+    <style>
+
+    </style>
+{% endblock style %}
+
+{% block title_dash %}Electeurs{% endblock title_dash %}
+
+{% block content %}
+
+
+    <h2>Gerer les Electeurs</h2>
+    <a class="btn btn-outline-warning" href="{% url "valide_page" %}">Valider un Electeurs</a>
+    <a class="btn btn-outline-warning" href="{% url "electeur_list" %}">liste des electeur</a>
+    <a class="btn btn-outline-warning" href="{% url "inscription_electeur" %}">creer un electeur</a>
+    {% comment %} <a class="nav-link text-whitea active" href="{% url "valide_page" %}">Valider un Electeurs</a> {% endcomment %}
+
+    {% if message %}
+        <div class="alert alert-danger alert-info" role="alert">
+            {{ message }}
+        </div>
+    {% endif %} 
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    
+{% endblock content %}
+
+
+{% block script %}
+    
+{% endblock script %}

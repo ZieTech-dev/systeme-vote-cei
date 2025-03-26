@@ -1,0 +1,50 @@
+﻿
+{% extends "administration/base_administration.html" %}
+
+{% block style %}
+    <style>
+
+    </style>
+{% endblock style %}
+
+{% block title_dash %}Candidats{% endblock title_dash %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow-lg p-4 rounded-4">
+        {% comment %} <h2 class="text-center mb-4" > {% if action == 'inscription' %}Inscription d'un électeur{% else %}Modification d'un électeur{% endif %}</h2> {% endcomment %}
+        
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        <div class="container mt-5">
+            <h2>Création d'un Candidat</h2>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Créer Candidat</button>
+            </form>
+        </div>
+    </div>
+</div>  
+    
+{% endblock content %}
+
+
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    
+{% endblock script %}
+
+

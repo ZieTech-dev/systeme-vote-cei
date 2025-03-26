@@ -1,0 +1,38 @@
+﻿{% extends "administration/base_administration.html" %}
+
+{% block style %}
+    <style>
+
+    </style>
+{% endblock style %}
+
+{% block title_dash %}Elections{% endblock title_dash %}
+
+{% block content %}
+
+
+    <h2>Gerer les Elections</h2>
+    
+    <a class="btn btn-outline-warning" href="{% url "election_list" %}">liste des elections</a>
+    <a class="btn btn-outline-warning" href="{% url "create_election" %}">creer une elections</a>
+
+    {% if message %}
+        <div class="alert alert-danger alert-info" role="alert">
+            {{ message }}
+        </div>
+    {% endif %} 
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    
+{% endblock content %}
+
+
+{% block script %}
+    
+{% endblock script %}

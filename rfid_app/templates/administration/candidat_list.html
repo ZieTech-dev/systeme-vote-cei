@@ -1,0 +1,46 @@
+﻿{% extends "administration/base_administration.html" %}
+
+{% block style %}
+    <style>
+
+    </style>
+{% endblock style %}
+
+{% block title_dash %}Candidats{% endblock title_dash %}
+
+{% block content %}
+<h2>Liste des Candidats</h2>
+<div class="container mt-5">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Nom</th>
+                <th scope="col">Prénom</th>
+                <th scope="col">Parti Politique</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for candidat in candidats %}
+            <tr>
+                <td>{{ candidat.nom }}</td>
+                <td>{{ candidat.prenom }}</td>
+                <td>{{ candidat.parti_politique }}</td>
+                <td><a href="#" class="btn btn-primary">Voir</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'create_candidat' %}" class="btn btn-success">Créer un Candidat</a>
+</div>
+    
+{% endblock content %}
+
+
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+{% endblock script %}
+
