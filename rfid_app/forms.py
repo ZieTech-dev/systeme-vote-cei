@@ -5,7 +5,7 @@ from .models import Candidat, Election
 class CandidatForm(forms.ModelForm):
     class Meta:
         model = Candidat
-        fields = ['username', 'nom', 'prenom', 'parti_politique', 'address', 'programme', 'photo_profile', 'election']
+        fields = ['username', 'nom', 'prenom', 'parti_politique', 'address', 'programme', 'photo_profile']
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control'}),
             'nom': forms.TextInput(attrs={'class': 'form-control'}),
@@ -14,7 +14,7 @@ class CandidatForm(forms.ModelForm):
             'address': forms.Textarea(attrs={'class': 'form-control'}),
             'programme': forms.Textarea(attrs={'class': 'form-control'}),
             'photo_profile': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
-            'election': forms.Select(attrs={'class': 'form-control'}),
+            
         }
 
 class ElectionForm(forms.ModelForm):

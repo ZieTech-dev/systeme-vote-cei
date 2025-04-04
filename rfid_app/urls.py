@@ -7,7 +7,7 @@ urlpatterns = [
     path('card_recognized/', views.card_recognized, name='card_recognized'),  # Page après reconnaissance
     # path('reset_session/', views.reset_session, name='reset_session'),
 
-    
+    path('candidat/<int:candidat_id>/', views.candidat_detail, name='candidat_detail'),
     
     
     path('voter/<int:election_id>/<int:candidat_id>', views.voter, name='voter'),

@@ -12,7 +12,7 @@ class Candidat(AbstractUser):
     address = models.TextField(blank=True, null=True)
     programme = models.TextField()
     photo_profile = models.ImageField(upload_to="photos de profile", default="photos de profile/candidat_img.jpg")
-    election = models.ForeignKey('Election', on_delete=models.CASCADE, related_name='election_list')
+    # election = models.ForeignKey('Election', on_delete=models.CASCADE, related_name='election_list')
 
     groups = models.ManyToManyField(Group, related_name="candidats_groups", blank=True)
     user_permissions = models.ManyToManyField(Permission, related_name="candidats_permissions", blank=True)

@@ -107,8 +107,8 @@ def card_recognized(request):
         return redirect('home') 
     
     election_active = Election.objects.filter(actif=True).first()
-    candidats = Candidat.objects.all() if election_active else []
-    # candidats = election_active.candidats.all() if election_active else []
+    # candidats = Candidat.objects.all() if election_active else []
+    candidats = election_active.candidats.all() if election_active else []
     if not election_active:
         messages.warning(request, "Aucune élection active n'est actuellement définie.")
         return redirect('home') 
@@ -162,3 +162,9 @@ def voter(request, election_id, candidat_id):
 #     return HttpResponse(f"oui.")
 # else:
 #     return HttpResponse(f"non.")
+
+
+
+def candidat_detail(request, candidat_id):
+    candidat = get_object_or_404(Candidat, id=candidat_id)
+    return render(request, "candidat_detail.html", {"candidat": candidat})
